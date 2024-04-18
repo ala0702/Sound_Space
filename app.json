@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.SoundSpace"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,6 +27,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7dbd1a73-0070-4f39-a171-85565b23985e"
+      }
+    },
+    "owner": "ala0702"
   }
 }

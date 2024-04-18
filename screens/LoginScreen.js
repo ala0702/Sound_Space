@@ -6,104 +6,118 @@ import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import * as AuthSession from "expo-auth-session";
+import { ResponseType, useAuthRequest } from "expo-auth-session";
+
 
 import Button from "../components/ui/button";
 import Colors from "../Colors";
 import { useNavigation } from "@react-navigation/native";
 
 function LoginScreen() {
-  const navigation = useNavigation();
-  //chceck if the token is present (empty dependency because we only want to check once)
-  useEffect(() => {
-    const isTokenValid = async () => {
-      const accessToken = await AsyncStorage.getItem("token");
-      const expirationDate = await AsyncStorage.getItem("expirationDate");
-      console.log("access token", accessToken);
-      console.log("expiration date", expirationDate);
-      if (accessToken && expirationDate) {
-        const currentTime = Date.now();
-        if (currentTime < parseInt(expirationDate)) {
-          // token still valid -> navigate to main screen
-          navigation.replace("Main");
-        } else {
-          // token expired -> remove it from async storage, because when we log in again we need new token
-          AsyncStorage.removeItem("token");
-          AsyncStorage.removeItem("expirationDate");
-        }
-      }
-    };
-    isTokenValid();
-  }, []);
+  const discovery = {
+    authorizationEndPoin: "https://accounts.spotify.com/authorize",
+    tokenEndpoint: "https://accounts.spotify.com/api/token",
+  };
 
-  async function authenticate() {
-    const redirectUri = AuthSession.makeRedirectUri({ useProxy: true });
-    const clientId = "4f8b3e8fdc2c4323bd1b179df401d3b9";
-    const scopes = [
-      "user-read-private",
-      "user-read-email",
-      "playlist-read-private",
-      "playlist-read-collaborative",
-      "playlist-modify-public",
-      "playlist-modify-private",
-      "user-library-read",
-      "user-library-modify",
-      "user-follow-read",
-      "user-follow-modify",
-      "streaming",
-    ];
+  const [request, response, promptAsync] = useAuthRequest(
+    {
+      responseType: ResponseType.Token,
+      clientId: "4f8b3e8fdc2c4323bd1b179df401d3b9",
+      clientSecret: "d04c006bdce54980be0669ae7f58fb03",
+      scopes: [
+        "user-read-email",
+        "user-read-private",
+        "user-read-currently-playing",
+        "user-read-playback-state",
+        "user-modify-playback-state",
+        "streaming",
+        "user-top-read",
+        "user-read-recently-played",
+        "",
+        "",
+      ],
+      usePKCE: false,
+      redirectUri: "exp://192.168.5.9:8081",
+    },
+    discovery
+  );
 
-    const { type, params } = await AuthSession.openAuthSessionAsync({
-      authUrl:
-        `https://accounts.spotify.com/authorize` +
-        `?response_type=code` +
-        `&client_id=${encodeURIComponent(clientId)}` +
-        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-        `&scope=${encodeURIComponent(scopes.join(" "))}`,
-    });
-
-    if (type === "success") {
-      const { code } = params;
-      console.log("Authentication successful with code:", code);
-      // Proceed with token exchange
-      // Store token in AsyncStorage
-      // Navigate to main screen
-      navigation.navigate("Main");
-    }
-  }
+  // useEffect(() => {
+  //   if (response?.type === "success") {
+  //     const { access_token } = response.params;
+  //     console.log("accessToken", access_token);
+  //   }
+  // }, [response]);
+  // //
+  // const navigation = useNavigation();
+  // //chceck if the token is present (empty dependency because we only want to check once)
+  // useEffect(() => {
+  //   const isTokenValid = async () => {
+  //     try {
+  //       const accessToken = await AsyncStorage.getItem("token");
+  //       const expirationDate = await AsyncStorage.getItem("expirationDate");
+  //       console.log("access token", accessToken);
+  //       console.log("expiration date", expirationDate);
+  //       if (accessToken && expirationDate) {
+  //         const currentTime = Date.now();
+  //         if (currentTime < parseInt(expirationDate)) {
+  //           // token still valid -> navigate to main screen
+  //           navigation.replace("Main");
+  //         } else {
+  //           // token expired -> remove it from async storage, because when we log in again we need new token
+  //           AsyncStorage.removeItem("token");
+  //           AsyncStorage.removeItem("expirationDate");
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error(
+  //         "An error occurred while checking token validity:",
+  //         error
+  //       );
+  //       // Możesz tutaj obsłużyć błąd, np. wyświetlając komunikat dla użytkownika
+  //     }
+  //   };
+  //   isTokenValid();
+  // }, []);
 
   // async function authenticate() {
-  //   const config = {
-  //     issuer: "http://accounts.spotify.com",
-  //     clientId: "4f8b3e8fdc2c4323bd1b179df401d3b9",
-  //     scopes: [
-  //       "user-read-private",
-  //       "user-read-email",
-  //       "playlist-read-private",
-  //       "playlist-read-collaborative",
-  //       "playlist-modify-public",
-  //       "playlist-modify-private",
-  //       "user-library-read",
-  //       "user-library-modify",
-  //       "user-follow-read",
-  //       "user-follow-modify",
-  //       "streaming",
-  //     ],
-  //     redirectUrl: "exp://localhost:19002/--/spotify-auth-callback",
-  //   };
-  //   const result = await AppAuth.authAsync(config);
-  //   console.log(result);
-  //   // if login expired -> show login page to the user
-  //   if (result.accessToken) {
-  //     const expirationDate = new Date(
-  //       result.accessToken.expirationDate
-  //     ).getTime();
-  //     AsyncStorage.setItem("token", result.accessToken);
-  //     AsyncStorage.setItem("expirationDate", expirationDate.toString());
-  //     navigation.navigate("Main");
+  //   try {
+  //     const config = {
+  //       issuer: "http://accounts.spotify.com",
+  //       clientId: "4f8b3e8fdc2c4323bd1b179df401d3b9",
+  //       scopes: [
+  //         "user-read-private",
+  //         "user-read-email",
+  //         "playlist-read-private",
+  //         "playlist-read-collaborative",
+  //         "playlist-modify-public",
+  //         "playlist-modify-private",
+  //         "user-library-read",
+  //         "user-library-modify",
+  //         "user-follow-read",
+  //         "user-follow-modify",
+  //         "streaming",
+  //       ],
+  //       redirectUrl: "exp://localhost:19002/--/spotify-auth-callback",
+  //     };
+  //     const result = await AppAuth.authAsync(config);
+  //     console.log(result);
+  //     // if login expired -> show login page to the user
+  //     if (result.accessToken) {
+  //       const expirationDate = new Date(
+  //         result.accessToken.expirationDate
+  //       ).getTime();
+  //       AsyncStorage.setItem("token", result.accessToken.accessToken);
+
+  //       AsyncStorage.setItem("expirationDate", expirationDate.toString());
+  //       navigation.navigate("Main");
+  //     }
+  //   } catch (error) {
+  //     console.error("An error occurred during authentication:", error);
   //   }
   // }
 
+  //animacja logo
   const waveAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.loop(
@@ -154,7 +168,7 @@ function LoginScreen() {
             text="Sign in with Spotify"
             iconName="musical-notes"
             iconColor={Colors.darkGreen}
-            onPress={authenticate}
+            onPress={() => promptAsync()}
           />
           <Button
             text="Sign in with Google"
