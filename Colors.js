@@ -5,7 +5,7 @@ export default {
     tabBarBackground: "#d9d7d0",
     tabBarLabel: "#3d3d3b",
     tabIconColor: "#302f2c",
-    coconut: "#EDEID2",
+    coconut: "#FDFEDE",
     // gradientLoginOne: "#9c7f7c",
     // gradientLoginTwo: "#948678",
     gradientLoginOne: "#F7EBDE",
@@ -17,6 +17,10 @@ export default {
     notesIconColor: "#415240",
     fbIconColor: "#334559",
     googleIconColor: "#7a0a0a",
+
+    //paleta pomara
+    dusk: '#817A81',
+    navigationBottom: '#ACB6AE'
   
   };
   

@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left:0,
     right:0,
-    backgroundColor: Colors.tabBarBackground,
+    backgroundColor: Colors.navigationBottom,
     color: Colors.tabBarLabel,
     height: 58,
     paddingTop: 10,

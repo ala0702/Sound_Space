@@ -1,24 +1,37 @@
-import { Text, View, StyleSheet, Animated, Pressable } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Animated,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import { useRef } from "react";
+import * as React from "react";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { ResponseType, useAuthRequest } from "expo-auth-session";
-
+import {
+  ResponseType,
+  useAuthRequest,
+  makeRedirectUri,
+} from "expo-auth-session";
 
 import Button from "../components/ui/button";
 import Colors from "../Colors";
 import { useNavigation } from "@react-navigation/native";
 
 function LoginScreen() {
+  const navigation = useNavigation();
+
+  // Endpoint
   const discovery = {
-    authorizationEndPoin: "https://accounts.spotify.com/authorize",
+    authorizationEndpoint: "https://accounts.spotify.com/authorize",
     tokenEndpoint: "https://accounts.spotify.com/api/token",
   };
-
   const [request, response, promptAsync] = useAuthRequest(
     {
       responseType: ResponseType.Token,
@@ -33,89 +46,47 @@ function LoginScreen() {
         "streaming",
         "user-top-read",
         "user-read-recently-played",
-        "",
-        "",
       ],
       usePKCE: false,
-      redirectUri: "exp://192.168.5.9:8081",
+      redirectUri: "exp://localhost:19000/--/"
     },
     discovery
   );
+  // Obsługa reakcji na autoryzację
+  useEffect(() => {
+    if (response?.type === "success") {
+      const { access_token, expires_in } = response.params;
+      const expirationDate = new Date().getTime() + parseInt(expires_in) * 1000;
 
-  // useEffect(() => {
-  //   if (response?.type === "success") {
-  //     const { access_token } = response.params;
-  //     console.log("accessToken", access_token);
-  //   }
-  // }, [response]);
-  // //
-  // const navigation = useNavigation();
-  // //chceck if the token is present (empty dependency because we only want to check once)
-  // useEffect(() => {
-  //   const isTokenValid = async () => {
-  //     try {
-  //       const accessToken = await AsyncStorage.getItem("token");
-  //       const expirationDate = await AsyncStorage.getItem("expirationDate");
-  //       console.log("access token", accessToken);
-  //       console.log("expiration date", expirationDate);
-  //       if (accessToken && expirationDate) {
-  //         const currentTime = Date.now();
-  //         if (currentTime < parseInt(expirationDate)) {
-  //           // token still valid -> navigate to main screen
-  //           navigation.replace("Main");
-  //         } else {
-  //           // token expired -> remove it from async storage, because when we log in again we need new token
-  //           AsyncStorage.removeItem("token");
-  //           AsyncStorage.removeItem("expirationDate");
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error(
-  //         "An error occurred while checking token validity:",
-  //         error
-  //       );
-  //       // Możesz tutaj obsłużyć błąd, np. wyświetlając komunikat dla użytkownika
-  //     }
-  //   };
-  //   isTokenValid();
-  // }, []);
+      AsyncStorage.setItem("token", access_token);
+      AsyncStorage.setItem("expirationDate", expirationDate.toString());
+      navigation.replace("Main");
+    }
+  }, [response]);
 
-  // async function authenticate() {
-  //   try {
-  //     const config = {
-  //       issuer: "http://accounts.spotify.com",
-  //       clientId: "4f8b3e8fdc2c4323bd1b179df401d3b9",
-  //       scopes: [
-  //         "user-read-private",
-  //         "user-read-email",
-  //         "playlist-read-private",
-  //         "playlist-read-collaborative",
-  //         "playlist-modify-public",
-  //         "playlist-modify-private",
-  //         "user-library-read",
-  //         "user-library-modify",
-  //         "user-follow-read",
-  //         "user-follow-modify",
-  //         "streaming",
-  //       ],
-  //       redirectUrl: "exp://localhost:19002/--/spotify-auth-callback",
-  //     };
-  //     const result = await AppAuth.authAsync(config);
-  //     console.log(result);
-  //     // if login expired -> show login page to the user
-  //     if (result.accessToken) {
-  //       const expirationDate = new Date(
-  //         result.accessToken.expirationDate
-  //       ).getTime();
-  //       AsyncStorage.setItem("token", result.accessToken.accessToken);
+  // Funkcja do sprawdzania ważności tokenu
+  const checkTokenValidity = async () => {
+    const accessToken = await AsyncStorage.getItem("token");
+    const expirationDate = await AsyncStorage.getItem("expirationDate");
+    console.log("access token:", accessToken);
+    console.log("expiration date:", expirationDate);
+    console.log(makeRedirectUri());
 
-  //       AsyncStorage.setItem("expirationDate", expirationDate.toString());
-  //       navigation.navigate("Main");
-  //     }
-  //   } catch (error) {
-  //     console.error("An error occurred during authentication:", error);
-  //   }
-  // }
+    if (accessToken && expirationDate) {
+      const currentTime = Date.now();
+      if (currentTime < parseInt(expirationDate)) {
+        // Token jest nadal ważny
+        navigation.replace("Main");
+      } else {
+        // Token wygasł, usuń go
+        await AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem("expirationDate");
+      }
+    }
+  };
+  React.useEffect(() => {
+    checkTokenValidity();
+  }, []);
 
   //animacja logo
   const waveAnim = useRef(new Animated.Value(0)).current;
@@ -164,12 +135,13 @@ function LoginScreen() {
           <Text style={styles.title}>Your Place in the World of Music</Text>
         </View>
         <View style={styles.loginContainer}>
+          <TouchableOpacity onPress={() => promptAsync()}><View><Text>SIGN IN</Text></View></TouchableOpacity>
           <Button
             text="Sign in with Spotify"
             iconName="musical-notes"
             iconColor={Colors.darkGreen}
-            onPress={() => promptAsync()}
           />
+
           <Button
             text="Sign in with Google"
             iconName="logo-google"
