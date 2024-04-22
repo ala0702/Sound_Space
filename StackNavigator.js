@@ -10,6 +10,7 @@ import Colors from "./Colors";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
+import LikedSongsScreen from "./screens/LikedSongsScreen";
 const Tab = createBottomTabNavigator();
 
 function BottomTabs() {
@@ -74,6 +75,11 @@ function Navigation() {
         <Stack.Screen
           name="Main"
           component={BottomTabs}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Liked"
+          component={LikedSongsScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

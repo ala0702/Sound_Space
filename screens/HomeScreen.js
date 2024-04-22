@@ -21,12 +21,22 @@ import TopArtistsContainer from "../components/TopArtistsContainer";
 import axios from "axios";
 
 import { LogBox } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { TouchableOpacity } from "react-native";
+
+import {
+  ResponseType,
+  useAuthRequest,
+  makeRedirectUri,
+} from "expo-auth-session";
+
 LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
 
 function HomeScreen() {
   const [userProfile, setUserProfile] = useState();
   const [recentlyPlayed, setRecentlyPlayed] = useState([]);
   const [topArtists, setTopArtist] = useState([]);
+  const navigation = useNavigation();
 
   const greetingMessage = () => {
     const currentTime = new Date().getHours();
@@ -162,7 +172,7 @@ function HomeScreen() {
           <View style={styles.songsContainer}>
             <View style={styles.songsContainer}>
               <MiniatureTile
-                handlePress={handlePressMiniatureTile}
+                handlePress={() => navigation.navigate("Liked")}
                 text="Liked Songs"
               />
             </View>
