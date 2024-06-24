@@ -60,7 +60,7 @@ function LikedSongsScreen() {
           Authorization: `Bearer ${accessToken}`,
         },
         params: {
-          limit: 50, 
+          limit: 50,
         },
       });
       const data = response.data.items;
@@ -87,9 +87,8 @@ function LikedSongsScreen() {
   const startTrack = async (nextSong) => {
     console.log(nextSong);
     const preview_url = nextSong?.track?.preview_url;
-    if(currentSound){
+    if (currentSound) {
       await currentSound.stopAsync();
-
     }
     try {
       await Audio.setAudioModeAsync({
@@ -126,13 +125,16 @@ function LikedSongsScreen() {
       setTotalTime(status.durationMillis);
       console.log(progress);
     }
-    if(status.didJustFinish === true){
+    if (status.didJustFinish === true) {
       //rsetcurrentSound(null);
       handlePlayNextSong();
     }
   };
 
   function handleOnPressIconBackArrow() {
+    if (currentSound) {
+      currentSound.stopAsync();
+    }
     navigation.navigate("Main");
   }
 
@@ -154,14 +156,13 @@ function LikedSongsScreen() {
     }
     if (index.current < savedSongs.length - 1) {
       index.current += 1;
-   
     } else {
       index.current = 0;
     }
     const nextSong = savedSongs[index.current];
-      setCurrentTrack(nextSong);
+    setCurrentTrack(nextSong);
 
-      await startTrack(nextSong);
+    await startTrack(nextSong);
   };
 
   const handlePlayPreviousSong = async () => {
@@ -210,9 +211,7 @@ function LikedSongsScreen() {
               </Pressable> */}
 
               {/* Sort icon */}
-              <Pressable>
-                {/* <BasicButton title="" /> */}
-              </Pressable>
+              <Pressable>{/* <BasicButton title="" /> */}</Pressable>
             </Pressable>
 
             {/* SHORT INFO */}
@@ -240,7 +239,13 @@ function LikedSongsScreen() {
             <FlatList
               showsVerticalScrollIndicator={false}
               data={savedSongs}
-              renderItem={({ item }) => <SongItem item={item} onPress={startTrack} isPlaying={item === currentTrack}/>}
+              renderItem={({ item }) => (
+                <SongItem
+                  item={item}
+                  onPress={startTrack}
+                  isPlaying={item === currentTrack}
+                />
+              )}
             />
           </ScrollView>
         </SafeAreaView>
