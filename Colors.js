@@ -5,7 +5,7 @@ export default {
     tabBarBackground: "#d9d7d0",
     tabBarLabel: "#3d3d3b",
     tabIconColor: "#302f2c",
-    coconut: "#FDFEDE",
+    coconut: "#fcfcfa",
     // gradientLoginOne: "#9c7f7c",
     // gradientLoginTwo: "#948678",
     gradientLoginOne: "#F7EBDE",
@@ -20,7 +20,11 @@ export default {
 
     //paleta pomara
     dusk: '#817A81',
-    navigationBottom: '#ACB6AE'
+    navigationBottom: '#ACB6AE',
+    lightPurple: '#d9d3db',
+    lightGreen: '#d4dbd3',
+    lightGrey: '#ded8d1',
+    darkGrey: "#5e5d5c",
   
   };
   

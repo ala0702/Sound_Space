@@ -3,10 +3,21 @@ import { Ionicons } from "@expo/vector-icons";
 
 import Colors from "../../Colors";
 
-function Button({ text, iconName, iconColor, onPress, mainContainerStyle, textStyle, paddingStyle }) {
+function Button({
+  text,
+  iconName,
+  iconColor,
+  onPress,
+  mainContainerStyle,
+  textStyle,
+  paddingStyle,
+}) {
   return (
     <View style={[styles.mainContainer, mainContainerStyle]}>
-      <Pressable style={[styles.PressableContainer, paddingStyle]} onPress={onPress}>
+      <Pressable
+        style={[styles.PressableContainer, paddingStyle]}
+        onPress={onPress}
+      >
         <Ionicons name={iconName} size={20} color={iconColor} />
         <Text style={[styles.text, textStyle]}>{text}</Text>
       </Pressable>
@@ -17,7 +28,6 @@ function Button({ text, iconName, iconColor, onPress, mainContainerStyle, textSt
 export default Button;
 
 const styles = StyleSheet.create({
-  
   mainContainer: {
     width: "75%",
     backgroundColor: Colors.buttonBg,

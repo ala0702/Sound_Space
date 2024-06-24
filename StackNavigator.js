@@ -5,11 +5,13 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "./screens/HomeScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import LoginScreen from "./screens/LoginScreen";
+import LikedSongsScreen from "./screens/LikedSongsScreen";
 
 import Colors from "./Colors";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
+import SongMoreScreen from "./screens/SongMoreScreen";
 const Tab = createBottomTabNavigator();
 
 function BottomTabs() {
@@ -76,6 +78,16 @@ function Navigation() {
           component={BottomTabs}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="LikedSongs"
+          component={LikedSongsScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MoreAboutSong"
+          component={SongMoreScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -85,15 +97,15 @@ export default Navigation;
 
 const styles = StyleSheet.create({
   bottomBarNavigator: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
-    left:0,
-    right:0,
+    left: 0,
+    right: 0,
     backgroundColor: Colors.navigationBottom,
     color: Colors.tabBarLabel,
-    height: 58,
+    height: 78,
     paddingTop: 10,
-    paddingBottom: 10,
+    paddingBottom: 20,
     paddingLeft: 20,
     paddingRight: 20,
     alignItems: "center",

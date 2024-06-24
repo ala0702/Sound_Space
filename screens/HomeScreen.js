@@ -21,12 +21,16 @@ import TopArtistsContainer from "../components/TopArtistsContainer";
 import axios from "axios";
 
 import { LogBox } from "react-native";
+import RecentlyPlayedContainer from "../components/RecentlyPlayedContainer";
+import { useNavigation } from "@react-navigation/native";
 LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
 
 function HomeScreen() {
   const [userProfile, setUserProfile] = useState();
   const [recentlyPlayed, setRecentlyPlayed] = useState([]);
   const [topArtists, setTopArtist] = useState([]);
+
+  const navigation = useNavigation();
 
   const greetingMessage = () => {
     const currentTime = new Date().getHours();
@@ -110,7 +114,13 @@ function HomeScreen() {
     getTopArtists();
   }, []);
 
-  function handlePressMiniatureTile() {}
+  function handlePressMiniatureTile() {
+    navigation.navigate("LikedSongs");
+  }
+
+  function handlePressMiniatureSongTile(item) {
+    navigation.navigate("MoreAboutSong", { item: item });
+  }
   return (
     <LinearGradient
       style={styles.root}
@@ -159,6 +169,8 @@ function HomeScreen() {
               </View>
             </View>
           </View>
+
+          {/* Liked songs and recently played */}
           <View style={styles.songsContainer}>
             <View style={styles.songsContainer}>
               <MiniatureTile
@@ -170,6 +182,7 @@ function HomeScreen() {
               data={recentlyPlayed}
               renderItem={({ item }) => (
                 <MiniatureTilePhoto
+                  handlePress={() => handlePressMiniatureSongTile(item)}
                   text={item.track.name}
                   source={{ uri: item.track.album.images[0].url }}
                 />
@@ -177,8 +190,14 @@ function HomeScreen() {
               numColumns={2}
             />
           </View>
+          {/* TOP ARTISTS */}
           <View style={styles.artistsContainer}>
             <TopArtistsContainer topArtists={topArtists} />
+          </View>
+
+          {/* RECENTLY PLAYED */}
+          <View>
+            <RecentlyPlayedContainer recentlyPlayed={recentlyPlayed} />
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -214,7 +233,7 @@ const styles = StyleSheet.create({
   text: {
     paddingTop: 15,
     color: Colors.textTitle,
-    fontWeight: "600",
+    fontWeight: "500",
     fontSize: 22,
     marginBottom: 0,
     paddingRight: 45,

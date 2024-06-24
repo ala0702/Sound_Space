@@ -18,7 +18,8 @@ export default TopArtistsContainer;
 const styles = StyleSheet.create({
     headerText: {
         fontSize: 22,
-        marginVertical: 15,
+        marginTop: 25,
+        marginBottom: 8,
         marginHorizontal: 10,
 
     },

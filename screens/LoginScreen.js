@@ -38,6 +38,7 @@ function LoginScreen() {
       clientId: "4f8b3e8fdc2c4323bd1b179df401d3b9",
       clientSecret: "d04c006bdce54980be0669ae7f58fb03",
       scopes: [
+        "user-library-read",
         "user-read-email",
         "user-read-private",
         "user-read-currently-playing",
@@ -46,9 +47,11 @@ function LoginScreen() {
         "streaming",
         "user-top-read",
         "user-read-recently-played",
+        "playlist-read-private",
+        "playlist-read-collaborative",
       ],
       usePKCE: false,
-      redirectUri: "exp://localhost:19000/--/"
+      redirectUri: "exp://localhost:19000/--/",
     },
     discovery
   );
@@ -135,13 +138,18 @@ function LoginScreen() {
           <Text style={styles.title}>Your Place in the World of Music</Text>
         </View>
         <View style={styles.loginContainer}>
-          <TouchableOpacity onPress={() => promptAsync()}><View><Text>SIGN IN</Text></View></TouchableOpacity>
+          {/* <TouchableOpacity onPress={() => promptAsync()}>
+            <View>
+              <Text>SIGN IN</Text>
+            </View>
+          </TouchableOpacity> */}
           <Button
+          onPress={() => promptAsync()}
             text="Sign in with Spotify"
             iconName="musical-notes"
             iconColor={Colors.darkGreen}
           />
-
+{/* 
           <Button
             text="Sign in with Google"
             iconName="logo-google"
@@ -156,7 +164,7 @@ function LoginScreen() {
             text="Sign in with Phone Number"
             iconName="phone-portrait"
             iconColor={Colors.notesIconColor}
-          />
+          /> */}
         </View>
       </SafeAreaView>
     </LinearGradient>
