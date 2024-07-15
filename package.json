@@ -26,6 +26,7 @@
     "expo-modules-core": "^1.11.13",
     "expo-status-bar": "~1.12.1",
     "expo-web-browser": "~13.0.3",
+    "lodash": "^4.17.21",
     "react": "18.2.0",
     "react-native": "0.74.1",
     "react-native-modals": "^0.22.3",

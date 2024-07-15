@@ -8,6 +8,7 @@ import {
   ScrollView,
   TextInput,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 
 import React, { useEffect, useContext, useRef } from "react";
@@ -34,8 +35,11 @@ import axios from "axios";
 import { Player } from "../PlayerContext";
 import { BottomModal, ModalContent } from "react-native-modals";
 
+import { debounce } from "lodash";
+
 function LikedSongsScreen() {
   const { currentTrack, setCurrentTrack } = useContext(Player);
+  const [searchedTracks, setSearchedTracks] = useState([]);
   const [currentSound, setcurrentSound] = useState(null);
   const [progress, setProgress] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -182,6 +186,25 @@ function LikedSongsScreen() {
     await startTrack(nextSong);
   };
 
+  useEffect(() => {
+    if (savedSongs.length > 0) {
+      handleSearch(input);
+    }
+  }, [savedSongs]);
+
+  const debouncedSearch = debounce(handleSearch, 800);
+
+  function handleSearch(text){
+    const filteredTracks = savedSongs.filter((item) =>
+      item.track.name.toLowerCase().includes(text.toLowerCase())
+    );
+    setSearchedTracks(filteredTracks);
+  };
+  const handleInputText = (text) => {
+    setInput(text);
+    debouncedSearch(text);
+  };
+
   return (
     <>
       <LinearGradient
@@ -201,14 +224,14 @@ function LikedSongsScreen() {
             {/* TODO EXAM */}
             <Pressable style={styles.navBar}>
               {/* Search bar */}
-              {/* <Pressable style={styles.searchBar}>
+              <Pressable style={styles.searchBar}>
                 <AntDesign name="search1" size={24} color={Colors.dusk} />
                 <TextInput
                   value={input}
-                  onChangeText={(text) => setInput(text)}
+                  onChangeText={(text) => handleInputText(text)}
                   placeholder="Find in liked songs"
                 ></TextInput>
-              </Pressable> */}
+              </Pressable>
 
               {/* Sort icon */}
               <Pressable>{/* <BasicButton title="" /> */}</Pressable>
@@ -236,9 +259,9 @@ function LikedSongsScreen() {
             </Pressable>
 
             {/* SHOW LIKED SONGS */}
-            <FlatList
+           { searchedTracks.length === 0 ? (<ActivityIndicator size='large' color='grey'/>) : ( <FlatList
               showsVerticalScrollIndicator={false}
-              data={savedSongs}
+              data={searchedTracks}
               renderItem={({ item }) => (
                 <SongItem
                   item={item}
@@ -246,7 +269,7 @@ function LikedSongsScreen() {
                   isPlaying={item === currentTrack}
                 />
               )}
-            />
+            />)}
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>
