@@ -6,20 +6,17 @@ import { ModalPortal } from "react-native-modals";
 
 export default function App() {
   return (
-    <>
-      <PlayerContext>
-        <Navigation />
-        <ModalPortal />
-      </PlayerContext>
-     
-    </>
+    <PlayerContext>
+      <Navigation />
+      <ModalPortal />
+    </PlayerContext>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },

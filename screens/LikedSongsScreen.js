@@ -194,12 +194,12 @@ function LikedSongsScreen() {
 
   const debouncedSearch = debounce(handleSearch, 800);
 
-  function handleSearch(text){
+  function handleSearch(text) {
     const filteredTracks = savedSongs.filter((item) =>
       item.track.name.toLowerCase().includes(text.toLowerCase())
     );
     setSearchedTracks(filteredTracks);
-  };
+  }
   const handleInputText = (text) => {
     setInput(text);
     debouncedSearch(text);
@@ -259,17 +259,21 @@ function LikedSongsScreen() {
             </Pressable>
 
             {/* SHOW LIKED SONGS */}
-           { searchedTracks.length === 0 ? (<ActivityIndicator size='large' color='grey'/>) : ( <FlatList
-              showsVerticalScrollIndicator={false}
-              data={searchedTracks}
-              renderItem={({ item }) => (
-                <SongItem
-                  item={item}
-                  onPress={startTrack}
-                  isPlaying={item === currentTrack}
-                />
-              )}
-            />)}
+            {searchedTracks.length === 0 ? (
+              <ActivityIndicator size="large" color="grey" />
+            ) : (
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                data={searchedTracks}
+                renderItem={({ item }) => (
+                  <SongItem
+                    item={item}
+                    onPress={startTrack}
+                    isPlaying={item === currentTrack}
+                  />
+                )}
+              />
+            )}
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>
